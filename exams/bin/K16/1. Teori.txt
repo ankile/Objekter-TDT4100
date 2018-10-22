@@ -1,0 +1,47 @@
+a)
+Ordet øverst til venstre i hver boks er navnet på klassen som boksen
+representerer.
+
+Pilene fra Person til de to andre objektene betyr at Person har felter som
+holder en referanse til objekter som er en forkomst av de gjeldene klasser.
+
+Boksene omslutter et objekt.
+
+Ordet som står ved siden av pilene er navnet på feltet som referer til
+objektet.
+
+At det er en stjerne ved siden av pilen fra Person til Course og Exam, betyr at
+Person har mulighet til å holde referanse til flere instanser av klassene.
+
+Det står ett 1-tall ved siden av pilen fra Exam til Course, hvilket betyr at
+en instans av Exam kun kan ha referanse til én Course.
+
+Alle ordene som står inne i boksene er felter/attributter for klassene. Det
+første ordet på hver linje forteller hva slags type objekt det er, og det andre
+ordet forteller hva variabelnavnet er.
+
+Bør nevnes at retningen på pilene indikerer hvilken vei man kan følge streken.
+Siden pilen f.eks. peker fra Person til Course, betyr det at man kan være i
+en instans av en person og aksessere metoder/felter i Course som er satt til
+public (eventuelt ikke har noen spesifisering av scope, og klassene bor i samme
+pakke), men ikke motsatt.
+
+
+b)
+1. En må velge om objektene som kan aksesseres av Person skal ha felter som kan
+aksesseres direkte eller om man skal sette de til private og ha getters
+og/eller setters.
+
+2. En må velge om verdiene i klassene skal settes vha. en konstruktør eller om
+de skal opprettes tomme og så kunne settes ved en senere anledning (enten
+direkte eller vha. setters)
+
+3. En må velge hva slags objekt som skal holde objekter som man kan ha mer enn
+én referanse til, dvs. skal man bruke List, Collection, Set, Map...
+
+4. Skal objektet som har referanse til andre objekter mulighet for å legge
+til/fjerne eller ei.
+
+
+c)
+

@@ -1,0 +1,272 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf400
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10140\viewh14060\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 public class Account \{\
+	private int balance = 0;\
+	private final String accountId;\
+	private int withdrawLimit = 0;\
+\
+	Account(String accountId) \{\
+		validateAccountId(accountId);\
+		this.accountId = accountId;\
+	\}\
+\
+	private validateAccountId(String id) \{\
+		for (int i = 0; i < id.length(); i ++) \{\
+			char c = id.charAt(i);\
+			if (! Character.isDigit(c) \{\
+				throw new IllegalArgumentException(\'ab\'91\'ab + c + \'ab\'91 is not a valid digit\'bb);\
+			\}\
+		\}\
+	\}\
+\
+	public int getBalance() \{\
+		return balance;\
+	\}\
+\
+	private void validateAmount(int amount) \{\
+		if (amount < 0) \{\
+			throw new IllegalArgumentException(\'abAmounts must be positive\'bb);\
+		\}\
+	\}\
+\
+	private void checkWithdrawLimit(int amount) \{\
+		if (withdrawLimit > 0 && amount > withdrawLimit) \{\
+			throw new IllegalArgumentException(\'abAmount can\'92t exceed withdraw limit\'bb);\
+		\}\
+	\}\
+\
+	public void deposit(int amount) \{\
+		validateAmount(amount);\
+		balance += amount;\
+	\}\
+\
+	public void withdraw(int amount) \{\
+		validateAmount(amount);\
+		checkWithdrawLimit(amount);\
+		balance -= amount;	\
+	\}\
+\
+	public String getAccountId() \{\
+		return accountId;\
+	\}\
+\
+	public void setWithdrawLimit(int limit) \{\
+		validateAmount(limit);\
+		withdrawLimit = limit;\
+	\}\
+		\
+\}\
+\
+\
+public class Bank \{\
+\
+	private static long nextAccountId = 10000000001;\
+	private Collection<Account> accounts = new ArrayList<>();\
+	private Collection<Transaction> transactions = new ArrayList<>();\
+\
+	public void addAccount(Account account) \{\
+		if (!accountExists(account)) \{\
+			accounts.add(account);\
+	\}\
+\
+	protected boolean accountExists(String accountId) \{\
+		return accounts.stream().map(a -> a.getAccountId())\
+				.anyMatch(accountId);\
+	\}\
+	\
+	protected Account getAccount(String accountId) \{\
+		return accounts.stream().filter(a -> accountId.equals(a.getAccountId())).findFirst().get();\
+	\}\
+\
+	public Account createAccount() \{\
+		while (accountExists(String.valueOf(nextAccountId) \{\
+			nextAccountId ++;\
+		\}\
+\
+		Account acc = new Account(String.valueOf(accountId);\
+		addAccount(acc);\
+		return acc;\
+	\}\
+\
+	protected void checkTransaction(Transaction trans) \{\
+		if (!accountExists(trans.source.getAccountId() && !accountExists(trans.target.getAccountId()) \{\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 			throw new IllegalArgumentException(\'abAccounts must be registered with this bank\'bb);\
+		\}\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 	\}\
+\
+	public void transfer(Account source, Account target, int amount) throws IllegalArgumentException \{\
+		Transaction transaction = new Transaction(source, target, amount);\
+		checkTransaction(transaction);\
+		source.withdraw(amount);\
+			\
+		try \{\
+			target.deposit(amount);\
+		\} catch (IllegalArgumentException e) \{\
+			source.deposit(amount);\
+			throw e;\
+		\}\
+		transactions.add(transaction);	\
+	\}\
+\
+	public int getTransferSum(Account account, int year, int month) \{\
+		transactions.stream().filter(t -> t.source.equals(account))\
+				.filter(t -> t.date.getYear() == year\
+					&& t.date.getMonth() == month)\
+				.mapToInt(t -> t.amount).sum();\
+	\}\
+\
+	public doTransactions(InputStream input) \{\
+		Scanner sc = new Scanner(input);\
+		while (sc.hasNextLine()) \{\
+			try \{\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 				String[] tokens = sc.nextLine().split(\'ab:\'bb);\
+				Account source = getAccount(tokens[0].split(\'ab-\'ab)[0]);\
+				Account target = getAccount(tokens[0].split(\'ab-\'ab)[1]);\
+				int amount = Integer.parseInt(tokens[1]);\
+				transfer(source, target, amount);\
+			\} catch (Exception e) \{\
+			\}\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+		\}\
+		sc.close();\
+\
+		\
+		\
+	\}\
+\
+\
+\}\
+\
+\
+public class SafeBank extends Bank \{\
+	\
+	private Map<Account, Integer> limits = new HashMap<>();\
+	private Map<Account, Integer> used = new HashMap<>();\
+\
+	public void setTransferLimit(String id, int amount) \{\
+		if (accountExists(id) && ! amount < 0) \{\
+			limits.put(getAccount(id), amount);\
+		\}\
+	\}\
+\
+	@Override\
+	public void transfer(Account source, Account target, int amount) throws IllegalArgumentException \{\
+	\
+	int limit = limits.getOrDefault(source, 0);\
+	int used = this.used.getOrDefault(source, 0);\
+\
+	if (limit > 0 && used + amount > limit) \{\
+		throw new IllegalArgumentException(\'abThis transaction is going over the limit\'bb);\
+	\}\
+\
+	super.transfer(source, target, amount);\
+	used.compute(source, (k, v) -> (v == null ? 0 : v) + amount);\
+\
+	\}\
+	\
+	\
+\}\
+\
+\
+public class Transaction \{\
+\
+	public final Account source;\
+	public final Account target;\
+	\
+	public final int amount;\
+\
+	public final Date date = new Date();\
+\
+	public Transaction(Account source, Account target, int amount) \{\
+		this.source = source;\
+		this.target = target;\
+		this.amount = amount;\
+	\}\
+	\
+\}\
+\
+\
+public class AccountTest extends TestCase \{\
+\
+	private Account account;\
+\
+	@Before\
+	public void setUp() \{\
+		account = new Account();\
+	\}\
+\
+	@Test\
+	public void testNewAccount() \{\
+		assertEquals(0, account.getBalance());\
+	\}\
+\
+	@Test\
+	public void testDeposit() \{\
+		try \{\
+			account.deposit(-100);\
+			fail();\
+		\} catch (IllegalArgumentException e) \{\
+		\} catch (Exception e) \{\
+			fail();\
+		\}\
+\
+		account.deposit(100);\
+		assertEquals(100, account.getBalance());\
+		\
+	\}\
+\
+	@Test\
+	public void testWithdraw() \{\
+		try \{\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 			account.withdraw(-100);\
+			fail();\
+		\} catch (IllegalArgumentException e) \{\
+		\} catch (Exception e) \{\
+			fail();\
+		\}\
+		\
+		account.deposit(100);\
+		account.withdraw(50);\
+		assertEquals(50, account.getBalance());\
+		\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 	\}\
+\
+	// Ikke behov for noen teardown i dette tilfellet (brukes som regel om man har med filer og slikt \'e5 gj\'f8re\
+\
+\}\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+}

@@ -1,0 +1,217 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf400
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10940\viewh14060\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+public class DayTime \{\
+\
+	public final int hours, minutes;\
+\
+	DayTime(int hours, int minutes) \{\
+		this.hours = hours;\
+		this.minutes = minutes;\
+	\}\
+\
+	public String toString() \{\
+		return hours + \'ab:\'bb + minutes;\
+	\}\
+\
+\}\
+\
+\
+public class TimeSlot implements Comparable<TimeSlot> \{\
+\
+	private final String desc;\
+	private final int start, end;\
+\
+	TimeSlot(String desc, int hours, int minutes, int duration) \{\
+		this.desc = desc;\
+		this.start = hours * 60 + minutes;\
+		this.end = start + duration;\
+	\}\
+	\
+	private static int asHours(int i) \{\
+		return i / 60;\
+	\}\
+\
+	private static int as minutes(int i) \{\
+		return i % 60;\
+	\}\
+\
+	private String twoDigits(int i) \{\
+		return (i < 10 ? \'ab0\'bb : \'ab\'bb) + i;\
+	\}\
+\
+	public String toString() \{\
+		return desc + \'ab@\'ab + twoDigits(asHours(start)) + \'ab:\'bb + twoDigits(asMinutes(start) + \'ab-\'ab + twoDigits(asHours(end)) + \'ab:\'bb + twoDigits(asMinutes(end));\
+	\}\
+\
+	public DayTime getStartTime() \{\
+		return new DayTime(asHours(start), asMinutes(start));\
+	\}\
+\
+	public DayTime getEndTime() \{\
+		return new DayTime(asHours(end), asMinutes(end));\
+	\}\
+\
+	public int getDuration() \{\
+		return end - start;\
+	\}\
+\
+	public boolean contains(int hours, int minutes) \{\
+		int inMinutes = hours * 60 + minutes;\
+		return start <= inMinutes && inMinutes < end;\
+	\}\
+\
+	public boolean overlaps(TimeSlot slot) \{\
+		return slot.contains(asHours(start), asMinutes(start)) || slot.contains(asHours(end), asMinutes(end))\
+	\}\
+\
+	@Override\
+	public int compareTo(TimeSlot other) \{\
+		int startDelta = start - other.start;\
+		return startDelta != 0 ? startDelta : end - other.end;\
+	\}\
+\
+\}\
+\
+\
+public class DayPlan \{\
+\
+	private List<TimeSlot> slots = new ArrayList<>();\
+	\
+	public void addTimeSlot(TimeSlot timeSlot) \{\
+		slots.add(timeSlot);\
+		Collections.sort(slots);\
+	\}\
+\
+	public void removeTimeSlot(TimeSlot timeSlot) \{\
+		slots.remove(timeSlot);\
+	\}\
+\
+	public TimeSlot getTimeSlotAt(int hours, int minutes) \{\
+		return slots.stream().filter(t -> t.contains(hours, minutes)).findFirst().orElse(null);\
+	\}\
+\
+	public boolean containsOverlapping() \{\
+		return slots.stream().anyMatch(s1 -> slots.stream()\
+			.anyMatch(s2 -> ! s1.equals(s2) && s1.overlaps(s2)));\
+	\}\
+\
+	public Collection<TimeSlot> getFreeTime() \{\
+		Collection<TimeSlot> result = new ArrayList<>();\
+		for (int i = 0; i < 1440; i ++ ) \{\
+			TimeSlot slot = getTimeSlotAt(i / 60, i % 60);\
+			if (slot == null) \{\
+				int end = i;\
+				while (getTimeSlotAt(end / 60, end % 60) == null  && end < 1440) \{\
+					end ++;\
+				\}\
+				result.add(new TimeSlot(\'abFreetime\'bb, i / 60, i % 60, end - i);\
+				i = end + 1;\
+			\}\
+		\}\
+	\}\
+\
+	public List<TimeSlot> getAllSlots() \{\
+		return slots;\
+	\}\
+\
+\}\
+\
+\
+public class TDT4100Lecture extends TimeSlot \{\
+\
+	TDT4100Lecture() \{\
+		super(\'abTDT4100 Lecture\'bb, 10, 15, 105);\
+	\}\
+\
+\}\
+\
+\
+public class TDT4100DayPlan extends DayPlan \{\
+\
+	private TDT4100Lecture;\
+\
+	TDT4100DayPlan() \{\
+		super();\
+		tdt4100 = new TDT4100Lecture();\
+		super.addTimeSlot(tdt4100);\
+	\}\
+\
+	@Override\
+	public void removeTimeSlot(TimeSlot slot) \{\
+		if (slot.equals(TDT4100Lecture))\'a0\{\
+			throw new IllegalArgumentException(\'abYou can\'92t remove a TDT4100 lecture\'bb);\
+		\}\
+		super.removeTimeSlot(slot);\
+	\}\
+\
+	@Override\
+	public void addTimeSlot(TimeSlot slot) \{\
+		if (slot.overlaps(tdt4100) \{\
+			throw new IllegalArgumentException(\'abCan\'92t have slots overlapping with TDT\'bb);\
+		\}\
+		super.addTimeSlot(slot);\
+	\}\
+\}\
+\
+\
+public class DelegatingDayPlan extends DayPlan \{\
+\
+	private List<DayPlan> delegates;\
+\
+	DelegatingDayPlan(DayPlan\'85dayPlans) \{\
+		super();\
+		delegates = new ArrayList<>(Arrays.asList(dayPlans);\
+		addAllTimeSlots(delegates);\
+	\}\
+	\
+	private void addAllTimeSlots(DayPlan[] plans) \{\
+		for (DayPlan plan : plans) \{\
+			for (TimeSlot slot : plan.getAllSlots()) \{\
+				addTimeSlot(slot);\
+			\}\
+		\}\
+	\}\
+\}\
+\
+\
+4 a)\
+Input/OutputStream operer med streams av bytes, mens Read/Writer operer med streams av characters, eller Strings.\
+\
+4 b)\
+IOException, hvilket et er s\'e5kalt checked exception, hvilket betyr at den sjekkes ved compile time og den m\'e5 behandles p\'e5 noen m\'e5te for at programmet skal kompilere, enten ved \'e5 lege til en throws-deklarasjon, eller en try-catch-blokk.\
+\
+4 c)\
+Ingenting skrives faktisk f\'f8r man kaller close().\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+}

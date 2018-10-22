@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="401.0" prefWidth="343.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="timetracker.TimeTrackerController">
+   <children>
+      <VBox prefHeight="403.0" prefWidth="343.0">
+         <children>
+            <Label prefHeight="40.0" prefWidth="96.0" text="SUBJECT:" textFill="#000000a2">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Aktiv Grotesk Light" size="15.0" />
+               </font>
+            </Label>
+            <TextField fx:id="subjectField" promptText="&quot;TMA4115&quot;">
+               <VBox.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="5.0" />
+               </VBox.margin>
+            </TextField>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Separator>
+            <Label fx:id="timeField" alignment="CENTER" prefHeight="40.0" prefWidth="345.0" text="00:00" textAlignment="CENTER" textFill="#000000a2">
+               <font>
+                  <Font name="Aktiv Grotesk Light" size="53.0" />
+               </font>
+            </Label>
+            <Separator layoutX="10.0" layoutY="106.0" prefWidth="200.0">
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </Separator>
+            <HBox prefHeight="65.0" prefWidth="343.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#start" prefWidth="101.0" text="START">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#pause" prefWidth="101.0" text="PAUSE">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#complete" prefWidth="101.0" text="COMPLETE">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </HBox>
+            <Separator prefWidth="200.0" />
+            <Label prefHeight="40.0" prefWidth="158.0" text="ALTERNATIVES:" textFill="#000000a2">
+               <font>
+                  <Font name="Aktiv Grotesk Light" size="15.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="15.0" right="15.0" top="5.0" />
+               </VBox.margin>
+            </Label>
+            <Button mnemonicParsing="false" onAction="#manualRecord" prefHeight="32.0" prefWidth="346.0" text="MANUAL RECORD">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#log" prefHeight="32.0" prefWidth="346.0" text="LOG AND STATISTICS">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
